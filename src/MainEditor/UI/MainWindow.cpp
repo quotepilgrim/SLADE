@@ -39,8 +39,8 @@
 #include "General/Misc.h"
 #include "Graphics/Icons.h"
 #include "MapEditor/MapEditor.h"
-#include "Scripting/ScriptManager.h"
 #include "SLADEWxApp.h"
+#include "Scripting/ScriptManager.h"
 #include "StartPage.h"
 #include "UI/Controls/BaseResourceChooser.h"
 #include "UI/Controls/ConsolePanel.h"
@@ -453,7 +453,7 @@ void MainWindow::createStartPage(bool newtip) const
 bool MainWindow::exitProgram()
 {
 	// Confirm exit
-	if (confirm_exit && !panel_archivemanager_->askedSaveUnchanged())
+	if (!wxGetApp().isSessionEnding() && confirm_exit && !panel_archivemanager_->askedSaveUnchanged())
 	{
 		if (wxMessageBox("Are you sure you want to exit SLADE?", "SLADE", wxICON_QUESTION | wxYES_NO, this) != wxYES)
 			return false;
@@ -627,6 +627,7 @@ bool MainWindow::handleAction(string_view id)
 		auto& p_inf = m_mgr->GetPane("console");
 		p_inf.Show(!p_inf.IsShown());
 		p_inf.MinSize(wxutil::scaledSize(200, 128));
+		dynamic_cast<ConsolePanel*>(p_inf.window)->focusInput();
 		m_mgr->Update();
 		return true;
 	}
